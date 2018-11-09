@@ -673,7 +673,7 @@ int main(int argc, char * argv[])
     
     cerr << " This utility measures memory bandwidth per channel or per DIMM rank in real-time" << endl;
     cerr << endl;
-
+    double timeStamp = 0;
     double delay = -1.0;
     bool csv = false, csvheader=false;
     uint32 no_columns = DEFAULT_DISPLAY_COLUMNS; // Default number of columns is 2
@@ -681,6 +681,7 @@ int main(int argc, char * argv[])
     char ** sysArgv = NULL;
 #ifndef _MSC_VER
     long diff_usec = 0; // deviation of clock is useconds between measurements
+    long stop_usec = 0;
     int calibrated = PCM_CALIBRATION_INTERVAL - 2; // keeps track is the clock calibration needed
 #endif
     int rankA = -1, rankB = -1;
@@ -727,6 +728,20 @@ int main(int argc, char * argv[])
                 string tmp = cmd.substr(found + 1);
                 if (!tmp.empty()) {
                     numberOfIterations = (unsigned int)atoi(tmp.c_str());
+                }
+            }
+            continue;
+        }
+        if (strncmp(*argv, "-ts", 3) == 0 ||
+            strncmp(*argv, "/ts", 3) == 0)
+        {
+            string cmd = string(*argv);
+            size_t found = cmd.find('=', 3);
+            if (found != string::npos) {
+                string tmp = cmd.substr(found + 1);
+                if (!tmp.empty()) {
+                    timeStamp = (unsigned int)atoi(tmp.c_str());
+                    timeStamp += 2000000;
                 }
             }
             continue;
@@ -817,6 +832,7 @@ int main(int argc, char * argv[])
             continue;
         }
     } while(argc > 1); // end of command line partsing loop
+
 
     m->disableJKTWorkaround();
     PCM::ErrorCode status = m->programServerUncoreMemoryMetrics(rankA, rankB);
@@ -912,7 +928,23 @@ int main(int argc, char * argv[])
         }
 #endif
 
-        MySleepMs(calibrated_delay_ms);
+        if (!timeStamp){
+
+            MySleepMs(calibrated_delay_ms);
+
+        } else {
+            
+            struct timeval wait_ts;
+
+            stop_usec = timeStamp + delay_ms*1000;
+
+            while (diff_usec < stop_usec) {
+                gettimeofday(&wait_ts, NULL);
+                diff_usec = wait_ts.tv_sec*1000000.0 + wait_ts.tv_usec;
+            }
+            timeStamp = stop_usec;
+            
+        }
 
 #ifndef _MSC_VER
         calibrated = (calibrated + 1) % PCM_CALIBRATION_INTERVAL;
