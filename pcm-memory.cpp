@@ -673,7 +673,7 @@ int main(int argc, char * argv[])
     
     cerr << " This utility measures memory bandwidth per channel or per DIMM rank in real-time" << endl;
     cerr << endl;
-    double timeStamp = 0;
+    long timeStamp = 0;
     double delay = -1.0;
     bool csv = false, csvheader=false;
     uint32 no_columns = DEFAULT_DISPLAY_COLUMNS; // Default number of columns is 2
@@ -938,9 +938,9 @@ int main(int argc, char * argv[])
 
             stop_usec = timeStamp + delay_ms*1000;
 
-            while (diff_usec < stop_usec) {
+            while (timeStamp < stop_usec) {
                 gettimeofday(&wait_ts, NULL);
-                diff_usec = wait_ts.tv_sec*1000000.0 + wait_ts.tv_usec;
+                timeStamp = wait_ts.tv_sec*1000000.0 + wait_ts.tv_usec;
             }
             timeStamp = stop_usec;
             
