@@ -740,7 +740,12 @@ int main(int argc, char * argv[])
             if (found != string::npos) {
                 string tmp = cmd.substr(found + 1);
                 if (!tmp.empty()) {
-                    timeStamp = (unsigned int)atoi(tmp.c_str());
+                    timeStamp = (long)atoi(tmp.c_str());
+
+                    struct timeval check_ts;
+                    gettimeofday(&check_ts, NULL);
+                    if ((ts + 10 * 1000000) < (check_ts.tv_sec * 1000000.0))
+                        timeStamp = check_ts.tv_sec * 1000000 + check_ts.tv_usec;
                     timeStamp += 2000000;
                 }
             }
@@ -934,17 +939,17 @@ int main(int argc, char * argv[])
 
         } else {
             printf("timestamp is %ld\n",timeStamp);
-            MySleepMs(calibrated_delay_ms);
-/*            struct timeval wait_ts;
 
-            stop_usec = timeStamp + delay_ms*1000;
+            struct timeval wait_ts;
+
+            stop_usec = timeStamp + delay_ms*1000*2;
 
             while (timeStamp < stop_usec) {
                 gettimeofday(&wait_ts, NULL);
                 timeStamp = wait_ts.tv_sec*1000000.0 + wait_ts.tv_usec;
             }
             timeStamp = stop_usec;
-*/            
+            
         }
 
 #ifndef _MSC_VER
