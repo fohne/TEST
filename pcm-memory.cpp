@@ -933,8 +933,9 @@ int main(int argc, char * argv[])
             MySleepMs(calibrated_delay_ms);
 
         } else {
-            
-            struct timeval wait_ts;
+            printf("timestamp is %ld\n",timeStamp);
+            MySleepMs(calibrated_delay_ms);
+/*            struct timeval wait_ts;
 
             stop_usec = timeStamp + delay_ms*1000;
 
@@ -943,7 +944,7 @@ int main(int argc, char * argv[])
                 timeStamp = wait_ts.tv_sec*1000000.0 + wait_ts.tv_usec;
             }
             timeStamp = stop_usec;
-            
+*/            
         }
 
 #ifndef _MSC_VER
