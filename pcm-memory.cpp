@@ -744,7 +744,7 @@ int main(int argc, char * argv[])
 
                     struct timeval check_ts;
                     gettimeofday(&check_ts, NULL);
-                    if ((ts + 10 * 1000000) < (check_ts.tv_sec * 1000000.0))
+                    if ((timeStamp + 10 * 1000000) < (check_ts.tv_sec * 1000000.0))
                         timeStamp = check_ts.tv_sec * 1000000 + check_ts.tv_usec;
                     timeStamp += 2000000;
                 }
