@@ -912,7 +912,7 @@ int main(int argc, char * argv[])
     }
 
     unsigned int i = 1;
-
+int checker = 0;
     while ((i <= numberOfIterations) || (numberOfIterations == 0))
     {
         if(!csv) cout << std::flush;
@@ -942,7 +942,7 @@ int main(int argc, char * argv[])
 
             struct timeval wait_ts;
 
-            stop_usec = timeStamp + delay_ms*1000*2;
+            stop_usec = timeStamp + delay_ms*1000/1000000;
 
             while (timeStamp < stop_usec) {
                 gettimeofday(&wait_ts, NULL);
@@ -967,12 +967,16 @@ int main(int argc, char * argv[])
 	  //cout << "Time elapsed: "<<dec<<fixed<<AfterTime-BeforeTime<<" ms\n";
 	  //cout << "Called sleep function for "<<dec<<fixed<<delay_ms<<" ms\n";
 	}
-
+if (checker > 1000000) {
         if(rankA >= 0 || rankB >= 0)
 //          calculate_bandwidth(m,BeforeState,AfterState,AfterTime-BeforeTime,csv,csvheader, no_columns, rankA, rankB);
           calculate_bandwidth_reduced(m,BeforeState,AfterState,AfterTime-BeforeTime, rankA, rankB);
         else
           calculate_bandwidth(m,BeforeState,AfterState,AfterTime-BeforeTime,csv,csvheader, no_columns);
+
+checker = 0;
+}
+checker++;
 //          calculate_bandwidth_reduced(m,BeforeState,AfterState,AfterTime-BeforeTime,csv,csvheader, no_columns);
         swap(BeforeTime, AfterTime);
         swap(BeforeState, AfterState);
